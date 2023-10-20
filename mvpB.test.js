@@ -18,7 +18,7 @@ describe('Sprint 7 Challenge Learner Tests', () => {
   /*
   👉 TASK 2 - Integration Testing of HelloWorld component at the bottom of this module
 
-  Test the <HelloWorld /> component above...
+  Test the <HelloWorld /> component found below...
     - using `screen.queryByText` to capture nodes
     - using `toBeInTheDocument` to assert their existence in the DOM
 
@@ -30,7 +30,7 @@ describe('Sprint 7 Challenge Learner Tests', () => {
     [6] renders a text that includes "javaScript is pretty" (use exact = false)
   */
   test('you can comment out this test', () => {
-    expect(false).toBe(false)
+    expect(true).toBe(false)
   })
 })
 
