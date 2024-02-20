@@ -1,4 +1,4 @@
-# Sprint 7 Module Challenge
+# Sprint 7 Challenge
 
 ## Introduction
 
