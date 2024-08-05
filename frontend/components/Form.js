@@ -8,6 +8,7 @@ const validationErrors = {
 }
 
 
+
 // 👇 Here you will create your schema.
 
 // 👇 This array could help you construct your checkboxes using .map in the JSX.
