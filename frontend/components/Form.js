@@ -45,6 +45,7 @@ const initialFormValues = {
 
 export default function Form() {
   const [formValues, setFormValues] = useState(initialFormValues);
+  const [errors, setErrors] = useState({});
 
   const toggleToppings = (e) => {
     const { name, checked } = e.target;
