@@ -24,7 +24,7 @@ const schema = yup.object({
 
   toppings: yup.array()
     .of(yup.number().oneOf([1, 2, 3, 4, 5]), yup.string().oneOf(['1, 2, 3, 4, 5']))
-    .optional() 
+    .optional()
 });
 
 
@@ -62,8 +62,6 @@ export default function Form() {
     <form>
       <h2>Order Your Pizza</h2>
       {true && <div className='success'>Thank you for your order!</div>}
-
-
       <div className="input-group">
         <div>
           <label htmlFor="fullName">Full Name</label><br />
@@ -77,7 +75,9 @@ export default function Form() {
           <label htmlFor="size">Size</label><br />
           <select id="size">
             <option value="">----Choose Size----</option>
-            {/* Fill out the missing options */}
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
           </select>
         </div>
         {true && <div className='error'>Bad value</div>}
