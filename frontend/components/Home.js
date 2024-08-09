@@ -8,6 +8,7 @@ function Home() {
   const handleImageClick = () => {
     navigate('/order');
   };
+
   return (
     <div>
       <h2>
@@ -21,7 +22,7 @@ function Home() {
         onClick={handleImageClick}
       />
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;

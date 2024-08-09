@@ -10,7 +10,6 @@ const validationErrors = {
 
 // 👇 Here you will create your schema.
 
-
 const schema = yup.object({
   fullName: yup.string()
     .trim()
@@ -43,6 +42,7 @@ const initialFormValues = {
   toppings: [],
 };
 
+
 export default function Form() {
   const [formValues, setFormValues] = useState(initialFormValues);
 
@@ -58,29 +58,39 @@ export default function Form() {
     }
   };
 
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormValues({
+      ...formValues,
+      [id]: value
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <h2>Order Your Pizza</h2>
       {true && <div className='success'>Thank you for your order!</div>}
       <div className="input-group">
         <div>
           <label htmlFor="fullName">Full Name</label><br />
-          <input placeholder="Type full name" id="fullName" type="text" />
+          <input placeholder="Type full name" id="fullName" type="text" value={formValues.fullName} onChange={handleChange} />
         </div>
-        {true && <div className='error'>Bad value</div>}
       </div>
 
       <div className="input-group">
         <div>
           <label htmlFor="size">Size</label><br />
-          <select id="size">
+          <select id="size" value={formValues.size} onChange={handleChange}>
             <option value="">----Choose Size----</option>
             <option value="small">Small</option>
             <option value="medium">Medium</option>
             <option value="large">Large</option>
           </select>
         </div>
-        {true && <div className='error'>Bad value</div>}
       </div>
 
       <div className="input-group">
@@ -97,8 +107,7 @@ export default function Form() {
           </label>
         ))}
       </div>
-      {/* 👇 Make sure the submit stays disabled until the form validates! */}
-      <input type="submit" />
+      <input type="submit" value="Submit" />
     </form>
   );
 }
