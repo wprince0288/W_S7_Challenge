@@ -12,12 +12,16 @@ function App() {
           className={({ isActive }) => (isActive ? 'active' : '')}>
           Home
         </NavLink>
+        <NavLink
+          to="/order"
+          className={({ isActive }) => (isActive ? 'active' : '')}>
+          Order
+        </NavLink>
       </nav>
-      {/* Route and Routes here */}
-      <Home />
-      <Form />
+      <Home path="/" element={<Home />} />
+      <Form path="/order" element={<Form />} />
     </div>
-  )
+  );
 }
 
 export default App
