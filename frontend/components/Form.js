@@ -10,6 +10,7 @@ const validationErrors = {
 
 // 👇 Here you will create your schema.
 
+
 const schema = yup.object({
   fullName: yup.string()
     .trim()
@@ -23,7 +24,7 @@ const schema = yup.object({
 
   toppings: yup.array()
     .of(yup.number().oneOf([1, 2, 3, 4, 5]), yup.string().oneOf(['1, 2, 3, 4, 5']))
-    .optional()
+    .optional() 
 });
 
 
@@ -37,7 +38,9 @@ const toppings = [
 ];
 
 const initialFormValues = {
-  toppings: ["1"],
+  fullName: "",
+  size: "",
+  toppings: [],
 };
 
 export default function Form() {
