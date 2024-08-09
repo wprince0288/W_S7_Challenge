@@ -8,8 +8,6 @@ const validationErrors = {
   sizeIncorrect: 'size must be S or M or L'
 }
 
-// 👇 Here you will create your schema.
-
 const schema = yup.object({
   fullName: yup.string()
     .trim()
@@ -46,6 +44,7 @@ const initialFormValues = {
 export default function Form() {
   const [formValues, setFormValues] = useState(initialFormValues);
   const [errors, setErrors] = useState({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const toggleToppings = (e) => {
     const { name, checked } = e.target;
@@ -63,22 +62,43 @@ export default function Form() {
     const { id, value } = e.target;
     setFormValues({
       ...formValues,
-      [id]: value
+      [id]: value,
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await schema.validate(formValues, { abortEarly: false });
+      setErrors({});
+      setIsSubmitted(true);
+
+      setFormValues(initialFormValues);
+
+      alert('Form submitted successfully!');
+
+    } catch (err) {
+      const validationErrors = {};
+      err.inner.forEach((error) => {
+        validationErrors[error.path] = error.message;
+      });
+      setErrors(validationErrors);
+      setIsSubmitted(false);
+    }
   };
+
+  const isSubmitDisabled = !formValues.fullName || !formValues.size || Object.keys(errors).length > 0;
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Order Your Pizza</h2>
-      {true && <div className='success'>Thank you for your order!</div>}
+      {isSubmitted && <div className='success'>Thank you for your order!</div>}
+
       <div className="input-group">
         <div>
           <label htmlFor="fullName">Full Name</label><br />
           <input placeholder="Type full name" id="fullName" type="text" value={formValues.fullName} onChange={handleChange} />
+          {errors.fullName && <div className='error'>{errors.fullName}</div>}
         </div>
       </div>
 
@@ -91,6 +111,7 @@ export default function Form() {
             <option value="medium">Medium</option>
             <option value="large">Large</option>
           </select>
+          {errors.size && <div className='error'>{errors.size}</div>}
         </div>
       </div>
 
@@ -104,11 +125,10 @@ export default function Form() {
               name={topping.topping_id}
             />{" "}
             {topping.text}
-            <br ></br>
           </label>
         ))}
       </div>
-      <input type="submit" value="Submit" />
+      <input type="submit" value="Submit" disabled={isSubmitDisabled} />
     </form>
   );
 }
