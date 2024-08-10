@@ -6,7 +6,7 @@ const validationErrors = {
   fullNameTooShort: 'full name must be at least 3 characters',
   fullNameTooLong: 'full name must be at most 20 characters',
   sizeIncorrect: 'size must be S or M or L'
-}
+};
 
 const schema = yup.object({
   fullName: yup.string()
@@ -19,9 +19,14 @@ const schema = yup.object({
     .oneOf(['S', 'M', 'L'], validationErrors.sizeIncorrect)
     .required('size is required.'),
 
-  toppings: yup.array().optional()
+  toppings: yup.array().of(yup.string().oneOf(['1', '2', '3', '4', '5'])).optional(),
 });
 
+const initialFormValues = {
+  fullName: "",
+  size: "",
+  toppings: [],
+};
 
 // 👇 This array could help you construct your checkboxes using .map in the JSX.
 const toppings = [
@@ -31,14 +36,6 @@ const toppings = [
   { topping_id: '4', text: 'Mushrooms' },
   { topping_id: '5', text: 'Ham' },
 ];
-
-
-const initialFormValues = {
-  fullName: "",
-  size: "",
-  toppings: [],
-};
-
 
 export default function Form() {
   const [formValues, setFormValues] = useState(initialFormValues);
@@ -53,7 +50,7 @@ export default function Form() {
         toppings: [...formValues.toppings, name],
       });
     } else {
-      setFormValues({ ...formValues, toppings: formValues.toppings.filter(t => t !== name) })
+      setFormValues({ ...formValues, toppings: formValues.toppings.filter(t => t !== name) });
     }
   };
 
@@ -71,7 +68,6 @@ export default function Form() {
       await schema.validate(formValues, { abortEarly: false });
       setErrors({});
       setIsSubmitted(true);
-
       setFormValues(initialFormValues);
 
     } catch (err) {
@@ -90,12 +86,11 @@ export default function Form() {
     <form onSubmit={handleSubmit}>
       <h2>Order Your Pizza</h2>
       {isSubmitted && <div className='success'>Thank you for your order!</div>}
-
       <div className="input-group">
         <div>
           <label htmlFor="fullName">Full Name</label><br />
           <input placeholder="Type full name" id="fullName" type="text" value={formValues.fullName} onChange={handleChange} />
-          {errors.fullName && <div className='error'>{errors.fullName}</div>}
+          {errors.fullName && <div className="validation">{errors.fullName}</div>}
         </div>
       </div>
 
@@ -108,7 +103,7 @@ export default function Form() {
             <option value="M">Medium</option>
             <option value="">Large</option>
           </select>
-          {errors.size && <div className='error'>{errors.size}</div>}
+          {errors.size && <div className="validation">{errors.size}</div>}
         </div>
       </div>
 
