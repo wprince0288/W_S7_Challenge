@@ -19,9 +19,7 @@ const schema = yup.object({
     .oneOf(['S', 'M', 'L'], validationErrors.sizeIncorrect)
     .required('size is required.'),
 
-  toppings: yup.array()
-    .of(yup.number().oneOf([1, 2, 3, 4, 5]), yup.string().oneOf(['1, 2, 3, 4, 5']))
-    .optional()
+  toppings: yup.array().optional()
 });
 
 
@@ -33,6 +31,7 @@ const toppings = [
   { topping_id: '4', text: 'Mushrooms' },
   { topping_id: '5', text: 'Ham' },
 ];
+
 
 const initialFormValues = {
   fullName: "",
@@ -75,8 +74,6 @@ export default function Form() {
 
       setFormValues(initialFormValues);
 
-      alert('Form submitted successfully!');
-
     } catch (err) {
       const validationErrors = {};
       err.inner.forEach((error) => {
@@ -107,9 +104,9 @@ export default function Form() {
           <label htmlFor="size">Size</label><br />
           <select id="size" value={formValues.size} onChange={handleChange}>
             <option value="">----Choose Size----</option>
-            <option value="small">Small</option>
-            <option value="medium">Medium</option>
-            <option value="large">Large</option>
+            <option value="S">Small</option>
+            <option value="M">Medium</option>
+            <option value="">Large</option>
           </select>
           {errors.size && <div className='error'>{errors.size}</div>}
         </div>
