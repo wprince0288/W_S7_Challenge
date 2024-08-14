@@ -21,11 +21,7 @@ const pizzaSchema = yup.object().shape({
     .string()
     .oneOf(['S', 'M', 'L'], validationErrors.sizeIncorrect)
     .required('size is required.'),
-  // toppings: yup
-  //   .array()
-  //   .of(yup.string()
-  //     .oneOf(['1', '2', '3', '4', '5']))
-  //   .optional(),
+
 });
 
 const toppings = [
@@ -73,73 +69,73 @@ export default function Form() {
     yup
       .reach(pizzaSchema, id)
       .validate(value)
-      .then(() => setErrors({ ...errors, [id]:''}))
-      .catch((error) => setErrors({...errors, [id]: error.errors[0]}));
-};
+      .then(() => setErrors({ ...errors, [id]: '' }))
+      .catch((error) => setErrors({ ...errors, [id]: error.errors[0] }));
+  };
 
-const toggleToppings = (e) => {
-  const { name, checked } = e.target;
-  setFormValues({
-    ...formValues,
-    toppings: checked
-      ? [...formValues.toppings, name]
-      : formValues.toppings.filter(t => t !== name),
-  });
-};
+  const toggleToppings = (e) => {
+    const { name, checked } = e.target;
+    setFormValues({
+      ...formValues,
+      toppings: checked
+        ? [...formValues.toppings, name]
+        : formValues.toppings.filter(t => t !== name),
+    });
+  };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const { data } = await axios.post('http://localhost:9009/api/order', formValues);
-  setMessage(data.message);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { data } = await axios.post('http://localhost:9009/api/order', formValues);
+    setMessage(data.message);
     setFormValues(initialFormValues);
   }
 
-return (
-  <form onSubmit={handleSubmit}>
-    <h2>Order Your Pizza</h2>
-    {message && <div className="success">{message}</div>} 
-  
+  return (
+    <form onSubmit={handleSubmit}>
+      <h2>Order Your Pizza</h2>
+      {message && <div className="success">{message}</div>}
+
       <div className="input-group">
-      <div>
-        <label htmlFor="fullName">Full Name</label><br />
-        <input
-          placeholder="Type full name"
-          id="fullName"
-          type="text"
-          value={formValues.fullName}
-          onChange={handleChange} />
-      </div>
-      {errors.fullName && <div className="error">{errors.fullName}</div>}
-    </div>
-
-    <div className="input-group">
-      <div>
-        <label htmlFor="size">Size</label><br />
-        <select id="size" value={formValues.size} onChange={handleChange}>
-          <option value="">----Choose Size----</option>
-          <option value="S">Small</option>
-          <option value="M">Medium</option>
-          <option value="L">Large</option>
-        </select>
-      </div>
-      {errors.size && <div className="error">{errors.size}</div>}
-    </div>
-
-    <div className="input-group">
-      {toppings.map((topping) => (
-        <label key={topping.topping_id}>
+        <div>
+          <label htmlFor="fullName">Full Name</label><br />
           <input
-            onChange={toggleToppings}
-            checked={formValues.toppings.includes(topping.topping_id)}
-            type="checkbox"
-            name={topping.topping_id}
-          />
-          {topping.text}
-          <br />
-        </label>
-      ))}
-    </div>
-    <input disabled={isSubmitted} type="submit" />
-  </form>
-);
+            placeholder="Type full name"
+            id="fullName"
+            type="text"
+            value={formValues.fullName}
+            onChange={handleChange} />
+        </div>
+        {errors.fullName && <div className="error">{errors.fullName}</div>}
+      </div>
+
+      <div className="input-group">
+        <div>
+          <label htmlFor="size">Size</label><br />
+          <select id="size" value={formValues.size} onChange={handleChange}>
+            <option value="">----Choose Size----</option>
+            <option value="S">Small</option>
+            <option value="M">Medium</option>
+            <option value="L">Large</option>
+          </select>
+        </div>
+        {errors.size && <div className="error">{errors.size}</div>}
+      </div>
+
+      <div className="input-group">
+        {toppings.map((topping) => (
+          <label key={topping.topping_id}>
+            <input
+              onChange={toggleToppings}
+              checked={formValues.toppings.includes(topping.topping_id)}
+              type="checkbox"
+              name={topping.topping_id}
+            />
+            {topping.text}
+            <br />
+          </label>
+        ))}
+      </div>
+      <input disabled={isSubmitted} type="submit" />
+    </form>
+  );
 }
