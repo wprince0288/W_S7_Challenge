@@ -97,7 +97,7 @@ const handleSubmit = async (e) => {
 return (
   <form onSubmit={handleSubmit}>
     <h2>Order Your Pizza</h2>
-    {message && <div classNamw="success">{message}</div>} 
+    {message && <div className="success">{message}</div>} 
   
       <div className="input-group">
       <div>
@@ -109,7 +109,7 @@ return (
           value={formValues.fullName}
           onChange={handleChange} />
       </div>
-      {errors.fullName && <div className="verror">{errors.fullName}</div>}
+      {errors.fullName && <div className="error">{errors.fullName}</div>}
     </div>
 
     <div className="input-group">
