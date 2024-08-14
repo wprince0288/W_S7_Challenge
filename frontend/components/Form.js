@@ -10,7 +10,7 @@ const validationErrors = {
   sizeIncorrect: 'size must be S or M or L'
 };
 
-const pizzaSchema = yup.object({
+const pizzaSchema = yup.object().shape({
   fullName: yup
     .string()
     .trim()
@@ -50,89 +50,96 @@ const initialErrors = {
 export default function Form() {
   const [formValues, setFormValues] = useState(initialFormValues);
   const [errors, setErrors] = useState(initialErrors);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(true);
+  const [message, setMessage] = useState('');
 
-  const toggleToppings = (e) => {
-    const { name, checked } = e.target;
-    setFormValues({
-      ...formValues,
-      toppings: checked
-        ? [...formValues.toppings, name]
-        : formValues.toppings.filter(t => t !== name),
-    });
+  const checkValidation = async () => {
+    try {
+      const valid = await pizzaSchema.isValid(formValues);
+      setIsSubmitted(!valid);
+    } catch (error) {
+      setErrors({ ...errors, [error.path]: error.errors[0] });
+    }
   };
+
+  useEffect(() => {
+    checkValidation();
+  }, [formValues]);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormValues({ ...formValues, [id]: value });
 
-  };
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        await pizzaSchema.validate(formValues, { abortEarly: false });
-        setErrors({});
-        setIsSubmitted(true);
-        setFormValues(initialFormValues);
+    yup
+      .reach(pizzaSchema, id)
+      .validate(value)
+      .then(() => setErrors({ ...errors, [id]:''}))
+      .catch((error) => setErrors({...errors, [id]: error.errors[0]}));
+};
 
-      } catch (err) {
-        const validationErrors = {};
-        err.inner.forEach((error) => {
-          validationErrors[error.path] = error.message;
-        });
-        setErrors(validationErrors);
-        setIsSubmitted(false);
-      }
-    };
+const toggleToppings = (e) => {
+  const { name, checked } = e.target;
+  setFormValues({
+    ...formValues,
+    toppings: checked
+      ? [...formValues.toppings, name]
+      : formValues.toppings.filter(t => t !== name),
+  });
+};
 
-
-
-    return (
-      <form onSubmit={handleSubmit}>
-        <h2>Order Your Pizza</h2>
-        {isSubmitted && <div className='success'>
-          {`Thank you for your order, ${formValues.fullName}!`}
-        </div>}
-        <div className="input-group">
-          <div>
-            <label htmlFor="fullName">Full Name</label><br />
-            <input
-              placeholder="Type full name"
-              id="fullName"
-              type="text"
-              value={formValues.fullName}
-              onChange={handleChange} />
-          </div>
-          {errors.fullName && <div className="validation">{errors.fullName}</div>}
-        </div>
-        <div className="input-group">
-          <div>
-            <label htmlFor="size">Size</label><br />
-            <select id="size" value={formValues.size} onChange={handleChange}>
-              <option value="">----Choose Size----</option>
-              <option value="S">Small</option>
-              <option value="M">Medium</option>
-              <option value="L">Large</option>
-            </select>
-          </div>
-          {errors.size && <div className="validation">{errors.size}</div>}
-        </div>
-
-        <div className="input-group">
-          {toppings.map((topping) => (
-            <label key={topping.topping_id}>
-              <input
-                onChange={toggleToppings}
-                checked={formValues.toppings.includes(topping.topping_id)}
-                type="checkbox"
-                name={topping.topping_id}
-              />
-              {topping.text}
-              <br />
-            </label>
-          ))}
-        </div>
-        <input disabled={isSubmitted} type="submit" />
-      </form>
-    );
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const { data } = await axios.post('http://localhost:9009/api/order', formValues);
+  setMessage(data.message);
+    setFormValues(initialFormValues);
   }
+
+return (
+  <form onSubmit={handleSubmit}>
+    <h2>Order Your Pizza</h2>
+    {message && <div classNamw="success">{message}</div>} 
+  
+      <div className="input-group">
+      <div>
+        <label htmlFor="fullName">Full Name</label><br />
+        <input
+          placeholder="Type full name"
+          id="fullName"
+          type="text"
+          value={formValues.fullName}
+          onChange={handleChange} />
+      </div>
+      {errors.fullName && <div className="verror">{errors.fullName}</div>}
+    </div>
+
+    <div className="input-group">
+      <div>
+        <label htmlFor="size">Size</label><br />
+        <select id="size" value={formValues.size} onChange={handleChange}>
+          <option value="">----Choose Size----</option>
+          <option value="S">Small</option>
+          <option value="M">Medium</option>
+          <option value="L">Large</option>
+        </select>
+      </div>
+      {errors.size && <div className="error">{errors.size}</div>}
+    </div>
+
+    <div className="input-group">
+      {toppings.map((topping) => (
+        <label key={topping.topping_id}>
+          <input
+            onChange={toggleToppings}
+            checked={formValues.toppings.includes(topping.topping_id)}
+            type="checkbox"
+            name={topping.topping_id}
+          />
+          {topping.text}
+          <br />
+        </label>
+      ))}
+    </div>
+    <input disabled={isSubmitted} type="submit" />
+  </form>
+);
+}
